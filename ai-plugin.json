@@ -7,7 +7,7 @@
   "auth": { "type": "none" },
   "api": {
     "type": "openapi",
-    "url": "https://raw.githubusercontent.com/KokisQuintero/Carlos-Private-Secretary-GPT/refs/heads/main/openapi.json"
+    "url": "https://raw.githubusercontent.com/KokisQuintero/Carlos-Private-Secretary-GPT/main/openapi.json"
   },
   "logo_url": "https://i.ibb.co/4Pm8xT9/secretary.png",
   "contact_email": "qcarlosandres@gmail.com",
