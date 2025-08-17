@@ -8,12 +8,13 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const DOMAIN = "https://carlos-private-secretary-gpt-production.up.railway.app"; // <-- tu dominio público
+// Usa TU dominio EXACTO (https, sin slash final)
+const DOMAIN = "https://carlos-private-secretary-gpt-production.up.railway.app";
 const PORT = process.env.PORT || 8080;
 
 const app = express();
 
-// ---------------- CORS (mismo archivo) ----------------
+// ---------- CORS ----------
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
@@ -24,35 +25,19 @@ app.use((req, res, next) => {
   if (req.method === "OPTIONS") return res.sendStatus(204);
   next();
 });
-// ------------------------------------------------------
 
 app.use(express.json());
 
-// ---------- OpenAPI (JSON) servido en memoria ----------
+// ---------- OpenAPI JSON (mínimo, hipercompatible) ----------
 const OPENAPI_SPEC = {
-  openapi: "3.0.1",
+  openapi: "3.0.0",
   info: { title: "Private Secretary Actions", version: "1.0.0" },
-  servers: [{ url: `${DOMAIN}/` }], // barra final ayuda al validador
+  servers: [{ url: DOMAIN }], // https, sin "/" final
   paths: {
     "/calendar/search": {
       post: {
         operationId: "searchEvents",
         summary: "Search events (demo)",
-        requestBody: {
-          required: false,
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
-                properties: {
-                  query: { type: "string" },
-                  time_min: { type: "string", format: "date-time" },
-                  time_max: { type: "string", format: "date-time" }
-                }
-              }
-            }
-          }
-        },
         responses: { "200": { description: "OK" } }
       }
     },
@@ -60,20 +45,6 @@ const OPENAPI_SPEC = {
       post: {
         operationId: "searchEmails",
         summary: "Search emails (demo)",
-        requestBody: {
-          required: false,
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
-                properties: {
-                  query: { type: "string" },
-                  max_results: { type: "integer" }
-                }
-              }
-            }
-          }
-        },
         responses: { "200": { description: "OK" } }
       }
     },
@@ -81,41 +52,51 @@ const OPENAPI_SPEC = {
       post: {
         operationId: "searchWeb",
         summary: "Web search (demo)",
-        requestBody: {
-          required: false,
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
-                properties: { query: { type: "string" } }
-              }
-            }
-          }
-        },
         responses: { "200": { description: "OK" } }
       }
     }
   }
 };
 
-app.get("/openapi.json", (req, res) => {
+// Servimos el OpenAPI en /openapi.json
+app.get("/openapi.json", (_req, res) => {
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.status(200).send(JSON.stringify(OPENAPI_SPEC, null, 2));
 });
-// -------------------------------------------------------
 
-// Sirve ai-plugin.json con Content-Type correcto
-app.get("/ai-plugin.json", (req, res) => {
+// ---------- Plugin manifest en ruta estándar ----------
+const PLUGIN_MANIFEST = {
+  schema_version: "v1",
+  name_for_human: "Carlos Private Secretary GPT",
+  name_for_model: "private_secretary_gpt",
+  description_for_human:
+    "Asistente privado con acciones para calendario, correos y web (demo).",
+  description_for_model:
+    "Asistente privado de Carlos. Usa estas acciones para buscar eventos, correos y resultados web (demo).",
+  auth: { type: "none" },
+  api: {
+    type: "openapi",
+    url: `${DOMAIN}/openapi.json`
+  },
+  logo_url: "https://i.ibb.co/4Pm8xT9/secretary.png",
+  contact_email: "qcarlosandres@gmail.com",
+  legal_info_url: "https://example.com/legal"
+};
+
+// Servimos el manifest en la ruta estándar y en la corta por compatibilidad
+app.get("/.well-known/ai-plugin.json", (_req, res) => {
   res.setHeader("Content-Type", "application/json; charset=utf-8");
-  res.sendFile(path.join(__dirname, "ai-plugin.json"));
+  res.status(200).send(JSON.stringify(PLUGIN_MANIFEST, null, 2));
 });
 
-// (Opcional) servir otros archivos estáticos (README, etc.)
-app.use(express.static(__dirname));
+app.get("/ai-plugin.json", (_req, res) => {
+  res.setHeader("Content-Type", "application/json; charset=utf-8");
+  res.status(200).send(JSON.stringify(PLUGIN_MANIFEST, null, 2));
+});
 
-// ------------------ Endpoints DEMO ---------------------
+// ---------- Endpoints DEMO ----------
 app.post("/calendar/search", (req, res) => {
-  const { query, time_min, time_max } = req.body || {};
+  const { query } = req.body || {};
   return res.json({
     ok: true,
     source: "demo",
@@ -123,8 +104,8 @@ app.post("/calendar/search", (req, res) => {
     events: [
       {
         title: "Demo: TAELED803 class",
-        start: time_min || "2025-08-18T09:00:00Z",
-        end: time_max || "2025-08-18T11:00:00Z",
+        start: "2025-08-18T09:00:00Z",
+        end: "2025-08-18T11:00:00Z",
         location: "Haymarket 222"
       }
     ]
@@ -164,7 +145,6 @@ app.post("/web/search", (req, res) => {
     ]
   });
 });
-// -------------------------------------------------------
 
 // Healthcheck
 app.get("/health", (_req, res) => res.json({ ok: true }));
