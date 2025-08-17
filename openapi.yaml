@@ -3,60 +3,53 @@ info:
   title: Private Secretary Actions
   version: 1.0.0
 servers:
-  - url: https://api.openai.com/v1
+  - url: https://REPLACE_WITH_YOUR_URL
 paths:
   /calendar/search:
     post:
       operationId: searchEvents
-      summary: Search events in Google Calendar
+      summary: Search events (demo)
       requestBody:
+        required: false
         content:
           application/json:
             schema:
               type: object
               properties:
-                query:
-                  type: string
-                time_min:
-                  type: string
-                  format: date-time
-                time_max:
-                  type: string
-                  format: date-time
+                query: { type: string }
+                time_min: { type: string, format: date-time }
+                time_max: { type: string, format: date-time }
       responses:
         "200":
-          description: Events found
-
+          description: OK
   /gmail/search:
     post:
       operationId: searchEmails
-      summary: Search emails in Gmail
+      summary: Search emails (demo)
       requestBody:
+        required: false
         content:
           application/json:
             schema:
               type: object
               properties:
-                query:
-                  type: string
-                max_results:
-                  type: integer
+                query: { type: string }
+                max_results: { type: integer }
       responses:
         "200":
-          description: Emails found
-
+          description: OK
   /web/search:
     post:
       operationId: searchWeb
-      summary: Search the web for fresh information
+      summary: Web search (demo)
       requestBody:
+        required: false
         content:
           application/json:
             schema:
               type: object
               properties:
-                query:
-                  type: string
+                query: { type: string }
       responses:
         "200":
-          description: Web results
+          description: OK
