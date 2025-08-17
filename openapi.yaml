@@ -3,7 +3,7 @@ info:
   title: Private Secretary Actions
   version: 1.0.0
 servers:
-  - url: https://REPLACE_WITH_YOUR_URL
+  - url: https://carlos-private-secretary-gpt-production.up.railway.app
 paths:
   /calendar/search:
     post:
