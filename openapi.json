@@ -12,21 +12,27 @@
       "post": {
         "operationId": "searchEvents",
         "summary": "Search events (demo)",
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": { "description": "OK" }
+        }
       }
     },
     "/gmail/search": {
       "post": {
         "operationId": "searchEmails",
         "summary": "Search emails (demo)",
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": { "description": "OK" }
+        }
       }
     },
     "/web/search": {
       "post": {
         "operationId": "searchWeb",
         "summary": "Web search (demo)",
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": { "description": "OK" }
+        }
       }
     }
   }
