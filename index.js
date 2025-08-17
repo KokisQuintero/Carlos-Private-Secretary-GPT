@@ -1,5 +1,5 @@
 // index.js (Node + Express, ESM)
-// Asegúrate de que en package.json tengas:  "type": "module"
+// package.json debe tener:  "type": "module"
 
 import express from "express";
 import path from "path";
@@ -8,9 +8,12 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const DOMAIN = "https://carlos-private-secretary-gpt-production.up.railway.app"; // <-- tu dominio público
+const PORT = process.env.PORT || 8080;
+
 const app = express();
 
-// ---------- CORS (en el MISMO archivo) ----------
+// ---------------- CORS (mismo archivo) ----------------
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
@@ -21,16 +24,87 @@ app.use((req, res, next) => {
   if (req.method === "OPTIONS") return res.sendStatus(204);
   next();
 });
-// ------------------------------------------------
+// ------------------------------------------------------
 
 app.use(express.json());
 
-// ---------- Rutas para servir archivos del plugin con Content-Type correcto ----------
-app.get("/openapi.yaml", (req, res) => {
-  res.setHeader("Content-Type", "application/yaml; charset=utf-8");
-  res.sendFile(path.join(__dirname, "openapi.yaml"));
-});
+// ---------- OpenAPI (JSON) servido en memoria ----------
+const OPENAPI_SPEC = {
+  openapi: "3.0.1",
+  info: { title: "Private Secretary Actions", version: "1.0.0" },
+  servers: [{ url: `${DOMAIN}/` }], // barra final ayuda al validador
+  paths: {
+    "/calendar/search": {
+      post: {
+        operationId: "searchEvents",
+        summary: "Search events (demo)",
+        requestBody: {
+          required: false,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  query: { type: "string" },
+                  time_min: { type: "string", format: "date-time" },
+                  time_max: { type: "string", format: "date-time" }
+                }
+              }
+            }
+          }
+        },
+        responses: { "200": { description: "OK" } }
+      }
+    },
+    "/gmail/search": {
+      post: {
+        operationId: "searchEmails",
+        summary: "Search emails (demo)",
+        requestBody: {
+          required: false,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  query: { type: "string" },
+                  max_results: { type: "integer" }
+                }
+              }
+            }
+          }
+        },
+        responses: { "200": { description: "OK" } }
+      }
+    },
+    "/web/search": {
+      post: {
+        operationId: "searchWeb",
+        summary: "Web search (demo)",
+        requestBody: {
+          required: false,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: { query: { type: "string" } }
+              }
+            }
+          }
+        },
+        responses: { "200": { description: "OK" } }
+      }
+    }
+  }
+};
 
+app.get("/openapi.json", (req, res) => {
+  res.setHeader("Content-Type", "application/json; charset=utf-8");
+  res.status(200).send(JSON.stringify(OPENAPI_SPEC, null, 2));
+});
+// -------------------------------------------------------
+
+// Sirve ai-plugin.json con Content-Type correcto
 app.get("/ai-plugin.json", (req, res) => {
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.sendFile(path.join(__dirname, "ai-plugin.json"));
@@ -38,9 +112,8 @@ app.get("/ai-plugin.json", (req, res) => {
 
 // (Opcional) servir otros archivos estáticos (README, etc.)
 app.use(express.static(__dirname));
-// ------------------------------------------------------------------------------------
 
-// ---------- Endpoints DEMO (para validar Actions) ----------
+// ------------------ Endpoints DEMO ---------------------
 app.post("/calendar/search", (req, res) => {
   const { query, time_min, time_max } = req.body || {};
   return res.json({
@@ -91,11 +164,9 @@ app.post("/web/search", (req, res) => {
     ]
   });
 });
-// ------------------------------------------------------------
+// -------------------------------------------------------
 
-// Healthcheck (útil para Railway)
+// Healthcheck
 app.get("/health", (_req, res) => res.json({ ok: true }));
 
-// Puerto (Railway usa PORT, a veces 8080)
-const port = process.env.PORT || 8080;
-app.listen(port, () => console.log(`Server running on port ${port}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
