@@ -1,0 +1,62 @@
+openapi: 3.1.0
+info:
+  title: Private Secretary Actions
+  version: 1.0.0
+servers:
+  - url: https://api.openai.com/v1
+paths:
+  /calendar/search:
+    post:
+      operationId: searchEvents
+      summary: Search events in Google Calendar
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                time_min:
+                  type: string
+                  format: date-time
+                time_max:
+                  type: string
+                  format: date-time
+      responses:
+        "200":
+          description: Events found
+
+  /gmail/search:
+    post:
+      operationId: searchEmails
+      summary: Search emails in Gmail
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                max_results:
+                  type: integer
+      responses:
+        "200":
+          description: Emails found
+
+  /web/search:
+    post:
+      operationId: searchWeb
+      summary: Search the web for fresh information
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+      responses:
+        "200":
+          description: Web results
