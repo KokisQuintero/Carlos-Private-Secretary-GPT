@@ -7,7 +7,7 @@
   "auth": { "type": "none" },
   "api": {
     "type": "openapi",
-    "url": "https://REPLACE_WITH_YOUR_URL/openapi.yaml"
+    "url": "https://carlos-private-secretary-gpt-production.up.railway.app/openapi.yaml"
   },
   "logo_url": "https://i.ibb.co/4Pm8xT9/secretary.png",
   "contact_email": "qcarlosandres@gmail.com",
