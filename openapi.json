@@ -1,0 +1,75 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Private Secretary Actions",
+    "version": "1.0.0"
+  },
+  "servers": [
+    { "url": "https://carlos-private-secretary-gpt-production.up.railway.app/" }
+  ],
+  "paths": {
+    "/calendar/search": {
+      "post": {
+        "operationId": "searchEvents",
+        "summary": "Search events (demo)",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "query": { "type": "string" },
+                  "time_min": { "type": "string", "format": "date-time" },
+                  "time_max": { "type": "string", "format": "date-time" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/gmail/search": {
+      "post": {
+        "operationId": "searchEmails",
+        "summary": "Search emails (demo)",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "query": { "type": "string" },
+                  "max_results": { "type": "integer" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/web/search": {
+      "post": {
+        "operationId": "searchWeb",
+        "summary": "Web search (demo)",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "query": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "OK" } }
+      }
+    }
+  }
+}
