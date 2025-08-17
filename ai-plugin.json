@@ -2,23 +2,14 @@
   "schema_version": "v1",
   "name_for_human": "Carlos Private Secretary GPT",
   "name_for_model": "private_secretary_gpt",
-  "description_for_human": "Tu asistente privado con acceso a Gmail, Calendar y Web para ayudarte con estudios, inversiones y trámites.",
-  "description_for_model": "Asistente privado de Carlos Quintero. Puede leer calendario, buscar correos y consultar información web.",
-  "auth": {
-    "type": "oauth",
-    "client_url": "https://accounts.google.com/o/oauth2/auth",
-    "scope": "https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/gmail.readonly",
-    "authorization_url": "https://accounts.google.com/o/oauth2/auth",
-    "authorization_content_type": "application/x-www-form-urlencoded",
-    "verification_tokens": {
-      "openai": "replace-with-your-token"
-    }
-  },
+  "description_for_human": "Asistente privado con acciones para calendario, correos y web (demo).",
+  "description_for_model": "Asistente privado de Carlos. Usa estas acciones para buscar eventos, correos y resultados web (demo).",
+  "auth": { "type": "none" },
   "api": {
     "type": "openapi",
-    "url": "https://yourdomain.com/openapi.yaml"
+    "url": "https://REPLACE_WITH_YOUR_URL/openapi.yaml"
   },
   "logo_url": "https://i.ibb.co/4Pm8xT9/secretary.png",
   "contact_email": "qcarlosandres@gmail.com",
-  "legal_info_url": "https://yourdomain.com/legal"
+  "legal_info_url": "https://example.com/legal"
 }
